@@ -1,0 +1,318 @@
+{{ 'custom1.css' | asset_url | stylesheet_tag }}
+{{ 'component-list-payment.css' | asset_url | stylesheet_tag }}
+{{ 'component-list-social.css' | asset_url | stylesheet_tag }}
+<div>
+<footer class="footer">
+  <div class="width">
+    <div class="footer-top">
+      <div>
+        <h1 class="footer-heading">{{ section.settings.text_1 }}</h1>
+        <h3 class="footer-subheading">{{ section.settings.text_2 }}</h3>
+
+        {% for block in section.blocks %}
+          {% if block.type == 'navigation' %}
+            <div class="footer-navigation">
+              <h2 class="accordion">{{ block.settings.linklist.title }} </h2>
+              <ul class="panel">
+                {% for link in block.settings.linklist.links %}
+                  <li>
+                    <a href="{{ link.url }}">{{ link.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% elsif block.type == 'News-letter' %}
+            <div class="footer-column-newsletter">
+              <h2>{{ block.settings.heading_n }} </h2>
+              <p>{{ block.settings.text-n }}</p>
+              <form>
+                <input type="email" placeholder="Email address">
+                <button type="submit" class="animated-subscribe-button">Subscribe</button>
+              </form>
+            </div>
+          {% elsif block.type == 'text' %}
+            <div class="footer-column-text">
+              <h2>{{ block.settings.heading }} </h2>
+              <p>{{ block.settings.text }}</p>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copyright">
+        {{ section.settings.copyright }}
+      </div>
+      <div class="footer-social-icons">
+        {%- liquid assign has_social_icons = true
+        if settings.social_facebook_link == blank and settings.social_instagram_link == blank and settings.social_youtube_link == blank and settings.social_tiktok_link == blank and settings.social_twitter_link == blank and settings.social_pinterest_link == blank and settings.social_snapchat_link == blank and settings.social_tumblr_link == blank and settings.social_vimeo_link == blank
+          assign has_social_icons = false
+        endif -%}
+        <div class="footer-payment-icons">
+        {%- if section.settings.payment_enable -%}
+          <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+          <ul class="list list-payment" role="list">
+            {%- for type in shop.enabled_payment_types -%}
+              <li class="list-payment__item">
+                {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+      <div>
+        {%- if section.settings.show_social and has_social_icons -%}
+          {%- render 'social-icons', class: 'footer__list-social' -%}
+        {%- endif -%}
+      </div>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+</div>
+<style>
+  .animated-subscribe-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  }
+
+  .animated-subscribe-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .animated-subscribe-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+</style>
+{% schema %}
+  {
+    "name": "custom footer",
+    "settings": [
+      {
+        "type": "text",
+        "id": "text_1",
+        "label": "Heading"
+      },
+      {
+        "type": "text",
+        "id": "text_2",
+        "label": "Sub_heading"
+      },
+      {
+      "type": "checkbox",
+      "id": "show_social",
+      "default": true,
+      "label": "Social Icons"
+      },
+    {
+      "type": "checkbox",
+      "id": "payment_enable",
+      "default": true,
+      "label": "t:sections.footer.settings.payment_enable.label"
+    },
+      {
+      "type": "text",
+      "id": "copyright",
+      "label": "copyright"
+    }
+
+    ],
+    "max_blocks": 5,
+    "blocks": [
+      {
+        "name":"Newsletter",
+        "type": "News-letter",
+        "settings": [
+          {
+            "id":"heading_n",
+            "type": "text",
+            "label": "Heading text"
+          },
+          {
+            "id":"text-n",
+            "type": "richtext",
+            "label": "Bodytext"
+          }
+          
+        ]
+      },
+      {
+        "name": "Text",
+        "type": "text",
+        "settings": [
+          {
+            "id":"heading",
+            "type": "text",
+            "label": "Heading text"
+          },
+          {
+            "id":"text",
+            "type": "richtext",
+            "label": "Bodytext"
+          }
+        ]
+      },
+      {
+        "name": "navgation column",
+        "type": "navigation",
+        "settings": [
+          {
+            "type": "link_list",
+            "id": "linklist",
+            "label": "navigation menu"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+<script>
+  var acc = document.getElementsByClassName("accordion");
+  var i;
+  
+  for (i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+  
+      var panel = this.nextElementSibling;
+      if (panel.style.display === "block") {
+        panel.style.display = "none";
+      } else {
+        panel.style.display = "block";
+      }
+    });
+  }
+</script>
+<style>
+  .footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+}
+
+.footer .width {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-top {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #444;
+}
+
+.footer-heading, .footer-subheading {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.footer-navigation .accordion {
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: background-color 0.3s;
+}
+
+.footer-navigation .accordion:hover {
+    background-color: #444;
+}
+
+.footer-navigation .panel {
+    display: none;
+    background-color: #444;
+    overflow: hidden;
+}
+
+.footer-navigation .panel li {
+    list-style: none;
+    padding: 10px 20px;
+}
+
+.footer-navigation .panel li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer-navigation .panel li a:hover {
+    text-decoration: underline;
+}
+
+.footer-column-newsletter, .footer-column-text {
+    margin-top: 20px;
+}
+
+.footer-column-newsletter form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-column-newsletter input[type="email"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+.footer-column-newsletter button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.footer-column-newsletter button:hover {
+    background-color: #45a049;
+}
+
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.footer-social-icons {
+    margin: 10px 0;
+}
+
+.footer-payment-icons .list-payment {
+    display: flex;
+    gap: 10px;
+}
+
+.footer-payment-icons .list-payment__item {
+    display: inline-block;
+}
+
+.footer__list-social {
+    display: flex;
+    gap: 10px;
+}
+
+.footer__list-social a {
+    color: #fff;
+    font-size: 24px;
+}
+
+.footer__list-social a:hover {
+    color: #4caf50;
+}
+
+</style>
